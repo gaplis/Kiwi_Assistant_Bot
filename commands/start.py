@@ -13,11 +13,24 @@ async def start(message, bot):
             db.update_user(message.from_user.id, db.u_name, message.from_user.username)
 
         db.find_user(message.from_user.id, db.f_name)
-        start_text = f'<b>Привет, {cursor.fetchone()[0]}! Это Киви, я бот-ассистент. 😊</b>\n' \
-                     f'<i>Посмотри меню или попробуй что-нибудь написать мне. 😉</i> '
+        if message.text == '/start':
+            start_text = f'<b>Привет, {cursor.fetchone()[0]}! Это Киви, я бот-ассистент. 😊</b>\n' \
+                         f'<i>Посмотри меню или попробуй что-нибудь написать мне. 😉</i> '
+        else:
+            start_text = f'<i>Посмотри меню или попробуй что-нибудь написать мне. 😉</i> '
 
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     profile_button = types.KeyboardButton('Профиль')
+    diary_button = types.KeyboardButton('Ежедневник')
+    whether_button = types.KeyboardButton('Погода')
+    search_button = types.KeyboardButton('Поиск')
+    games_button = types.KeyboardButton('Игры')
+    help_button = types.KeyboardButton('Помощь')
     markup.row(profile_button)
+    markup.row(diary_button)
+    markup.row(whether_button)
+    markup.row(search_button)
+    markup.row(games_button)
+    markup.row(help_button)
 
     await bot.send_message(message.chat.id, start_text, parse_mode='html', reply_markup=markup)

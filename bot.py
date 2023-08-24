@@ -6,6 +6,7 @@ from config import TOKEN
 
 from commands.start import start
 from commands.profile import profile
+from commands.not_found import not_found
 from commands.change_city import change_city, cancel_change_city, ready_change_city
 from commands.change_name import change_name, cancel_change_name, ready_change_name
 
@@ -62,6 +63,7 @@ async def ready_for_change_city(message):
 
 @bot.message_handler(content_types=['text'])
 async def insert_text(message):
+    # ToDo: нужно изменить структуру проверки слов
     match message.text.lower():
         case 'профиль':
             await profile_command(message)
@@ -70,7 +72,13 @@ async def insert_text(message):
         case 'указать или изменить город':
             await change_city_command(message)
         case _:
-            await start_command(message)
+            await not_found_command(message)
+
+
+@bot.message_handler()
+async def not_found_command(message):
+    await not_found(message, bot)
+    await start_command(message)
 
 
 bot.add_custom_filter(asyncio_filters.StateFilter(bot))
