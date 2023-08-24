@@ -1,13 +1,15 @@
 from telebot import asyncio_filters
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_storage import StateMemoryStorage
+
 from config import TOKEN
 
 from commands.start import start
 from commands.profile import profile
+from commands.change_city import change_city, cancel_change_city, ready_change_city
 from commands.change_name import change_name, cancel_change_name, ready_change_name
 
-from states.states import ChangeNameStates
+from classes_states.states import ChangeNameStates, ChangeCityStates
 
 bot = AsyncTeleBot(TOKEN, state_storage=StateMemoryStorage())
 
@@ -22,7 +24,7 @@ async def profile_command(message):
     await profile(message, bot)
 
 
-@bot.message_handler(commands=['change'])
+@bot.message_handler(commands=['change_name'])
 async def change_name_command(message):
     await change_name(message, bot)
 
@@ -40,6 +42,24 @@ async def ready_for_change_name(message):
     await ready_change_name(message, bot)
 
 
+@bot.message_handler(commands=['change_city'])
+async def change_city_command(message):
+    await change_city(message, bot)
+
+
+@bot.message_handler(state="*", commands='cancel')
+async def cancel_change_city_command(message):
+    await cancel_change_city(message, bot)
+
+
+@bot.message_handler(state=ChangeCityStates.new_city)
+async def ready_for_change_city(message):
+    if message.text.lower() == 'отмена':
+        return await cancel_change_city_command(message)
+
+    await ready_change_city(message, bot)
+
+
 @bot.message_handler(content_types=['text'])
 async def insert_text(message):
     match message.text.lower():
@@ -47,6 +67,8 @@ async def insert_text(message):
             await profile_command(message)
         case 'поменять имя':
             await change_name_command(message)
+        case 'указать или изменить город':
+            await change_city_command(message)
         case _:
             await start_command(message)
 
