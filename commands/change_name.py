@@ -28,9 +28,9 @@ async def cancel_change_name(message, bot):
 async def ready_change_name(message, bot):
     db = DataBase()
     with db as cursor:
-        db.update_user(message.from_user.id, db.f_name, message.text)
+        db.update_user(message.from_user.id, db.F_NAME, message.text)
 
-        db.find_user(message.from_user.id, db.f_name)
+        db.find_user(message.from_user.id, db.F_NAME)
         success_text = f'Отлично! Ваше новое имя - {cursor.fetchone()[0]}.'
 
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)

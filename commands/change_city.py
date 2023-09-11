@@ -29,9 +29,9 @@ async def cancel_change_city(message, bot):
 async def ready_change_city(message, bot):
     db = DataBase()
     with db as cursor:
-        db.update_user(message.from_user.id, db.u_city, message.text)
+        db.update_user(message.from_user.id, db.U_CITY, message.text)
 
-        db.find_user(message.from_user.id, db.u_city)
+        db.find_user(message.from_user.id, db.U_CITY)
         success_text = f'Отлично! Указанный город - {cursor.fetchone()[0]}.'
 
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)

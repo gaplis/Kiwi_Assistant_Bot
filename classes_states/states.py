@@ -7,3 +7,8 @@ class ChangeNameStates(StatesGroup):
 
 class ChangeCityStates(StatesGroup):
     new_city = State()
+
+
+class AddTaskStates(StatesGroup):
+    task = State()
+    deadline = State()
