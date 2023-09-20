@@ -1,5 +1,5 @@
 from telebot.async_telebot import types
-from db import DataBase
+from utils.db import DataBase
 
 
 async def profile(message, bot):

@@ -1,6 +1,6 @@
 from telebot.async_telebot import types
-from db import DataBase
-from classes_states.states import ChangeCityStates
+from utils.db import DataBase
+from utils.states import ChangeCityStates
 
 
 async def change_city(message, bot):
@@ -29,7 +29,7 @@ async def cancel_change_city(message, bot):
 async def ready_change_city(message, bot):
     db = DataBase()
     with db as cursor:
-        db.update_user(message.from_user.id, db.U_CITY, message.text)
+        db.update_user(message.from_user.id, db.U_CITY, message.text.title())
 
         db.find_user(message.from_user.id, db.U_CITY)
         success_text = f'Отлично! Указанный город - {cursor.fetchone()[0]}.'

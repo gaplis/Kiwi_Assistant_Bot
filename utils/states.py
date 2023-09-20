@@ -12,3 +12,12 @@ class ChangeCityStates(StatesGroup):
 class AddTaskStates(StatesGroup):
     task = State()
     deadline = State()
+
+
+class ChangeTaskStates(StatesGroup):
+    id_task = State()
+    new_data = State()
+
+
+class DeleteTaskStates(StatesGroup):
+    id_task = State()

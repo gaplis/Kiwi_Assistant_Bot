@@ -1,6 +1,6 @@
 from telebot.async_telebot import types
-from db import DataBase
-from classes_states.states import ChangeNameStates
+from utils.db import DataBase
+from utils.states import ChangeNameStates
 
 
 async def change_name(message, bot):
