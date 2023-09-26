@@ -1,51 +1,31 @@
-from telebot.async_telebot import types
 from datetime import datetime, timezone, timedelta
 
 from config import OPEN_WEATHER_TOKEN
 
 from utils.db import DataBase
-from utils.weather import get_weather
+from utils.weather import get_weather, weather_descriptions
+from utils.markups import weather_city_is_none_markup, weather_incorrect_city_markup, weather_ready_markup
 
 
 async def weather_now(message, bot):
-    db = DataBase()
-    with db as cursor:
-        db.find_user(message.from_user.id, db.ALL)
-        city = cursor.fetchone()[5]
-    if city is None:
-        weather_now_text = 'У тебя не указан город.\n' \
-                           'Хочешь его указать?'
-
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        change_city_button = types.InlineKeyboardButton('Указать город')
-        main_menu_button = types.InlineKeyboardButton('Главное меню')
-        markup.row(change_city_button)
-        markup.row(main_menu_button)
-
-        await bot.send_message(message.chat.id, weather_now_text, parse_mode='html', reply_markup=markup)
+    if len(message.text.split()) > 1:
+        city = " ".join(message.text.split()[1::]).title()
+        is_db = False
     else:
+        db = DataBase()
+        with db as cursor:
+            db.find_user(message.from_user.id, db.ALL)
+            city = cursor.fetchone()[5]
+            is_db = True
+    if city is not None:
         weather = get_weather(f'{city}', OPEN_WEATHER_TOKEN)
         if 'message' in weather:
-            weather_now_text = 'Похоже, ты указал несуществующий город или допустил опечатку.\n' \
-                               'Попробуй указать правильный город.'
+            incorrect_city_text = 'Похоже, ты указал несуществующий город или допустил опечатку.\n' \
+                                  'Попробуй указать правильный город.'
 
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            change_city_button = types.InlineKeyboardButton('Изменить город')
-            main_menu_button = types.InlineKeyboardButton('Главное меню')
-            markup.row(change_city_button)
-            markup.row(main_menu_button)
-
-            await bot.send_message(message.chat.id, weather_now_text, parse_mode='html', reply_markup=markup)
+            await bot.send_message(message.chat.id, incorrect_city_text,
+                                   parse_mode='html', reply_markup=weather_incorrect_city_markup(is_db))
         else:
-            weather_descriptions = {
-                "Clear": "Ясно☀️",
-                "Clouds": "Облачно☁️",
-                "Rain": "Дождь🌧️",
-                "Drizzle": "Мелкий дождь🌧️",
-                "Thunderstorm": "Гроза⛈️",
-                "Snow": "Снег🌨️",
-                "Mist": "Туман🌫️",
-            }
             whats_now = weather["weather"][0]["main"]
             if whats_now in weather_descriptions:
                 now = weather_descriptions[whats_now]
@@ -70,10 +50,11 @@ async def weather_now(message, bot):
                                 f'Заход солнца: {sunset.strftime("%H:%M:%S")}\n' \
                                 f'Продолжительность дня: {sunset - sunrise}'
 
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            change_city_button = types.InlineKeyboardButton('Погода на 5 дней')
-            main_menu_button = types.InlineKeyboardButton('Главное меню')
-            markup.row(change_city_button)
-            markup.row(main_menu_button)
+            await bot.send_message(message.chat.id, weather_now_text,
+                                   parse_mode='html', reply_markup=weather_ready_markup(True))
+    else:
+        city_is_none_text = 'У тебя не указан город.\n' \
+                            'Хочешь его указать?'
 
-            await bot.send_message(message.chat.id, weather_now_text, parse_mode='html', reply_markup=markup)
+        await bot.send_message(message.chat.id, city_is_none_text,
+                               parse_mode='html', reply_markup=weather_city_is_none_markup())

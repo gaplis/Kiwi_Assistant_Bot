@@ -1,5 +1,5 @@
-from telebot.async_telebot import types
 from utils.db import DataBase
+from utils.markups import start_markup
 
 
 async def start(message, bot):
@@ -13,24 +13,12 @@ async def start(message, bot):
             db.update_user(message.from_user.id, db.U_NAME, message.from_user.username)
 
         db.find_user(message.from_user.id, db.F_NAME)
-        if message.text == '/start':
-            start_text = f'<b>Привет, {cursor.fetchone()[0]}! Это Киви, я бот-ассистент. 😊</b>\n' \
-                         f'<i>Посмотри меню или попробуй что-нибудь написать мне. 😉</i> '
-        else:
-            start_text = f'<i>Посмотри меню или попробуй что-нибудь написать мне. 😉</i> '
+        name = cursor.fetchone()[0]
 
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    profile_button = types.KeyboardButton('Профиль')
-    diary_button = types.KeyboardButton('Ежедневник')
-    whether_button = types.KeyboardButton('Погода')
-    search_button = types.KeyboardButton('Поиск')
-    games_button = types.KeyboardButton('Игры')
-    help_button = types.KeyboardButton('Помощь')
-    markup.row(profile_button)
-    markup.row(diary_button)
-    markup.row(whether_button)
-    markup.row(search_button)
-    markup.row(games_button)
-    markup.row(help_button)
+    if message.text == '/start':
+        start_text = f'<b>Привет, {name}! Это Киви, я бот-ассистент. 😊</b>\n' \
+                     f'<i>Посмотри меню или попробуй что-нибудь написать мне. 😉</i> '
+    else:
+        start_text = f'<i>Посмотри меню или попробуй что-нибудь написать мне. 😉</i> '
 
-    await bot.send_message(message.chat.id, start_text, parse_mode='html', reply_markup=markup)
+    await bot.send_message(message.chat.id, start_text, parse_mode='html', reply_markup=start_markup())

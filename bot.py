@@ -189,10 +189,10 @@ async def insert_text(message):
         await delete_task_command(message)
     elif command in MAIN_MENU:
         await start_command(message)
-    elif command in WEATHER_NOW: # ToDo: Добавить команду "Погода {город}"
-        await weather_now_command(message)
     elif command in WEATHER_5_DAYS:
         await weather_5_days_command(message)
+    elif command in WEATHER_NOW or ('погода' in command and len(command.split()) > 1):
+        await weather_now_command(message)
     else:
         await not_found_command(message)
 

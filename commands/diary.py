@@ -1,5 +1,6 @@
-from telebot.async_telebot import types
 import json
+
+from utils.markups import diary_markup
 
 
 async def diary(message, bot):
@@ -11,6 +12,7 @@ async def diary(message, bot):
             if tasks_list:
                 diary_text = f'<b>Ваши активные задачи:</b>\n'
                 for i, item in enumerate(tasks_list, start=1):
+                    # ToDo: сделать вывод задач по датам
                     diary_text += f'{i}: {item["task"]}\n' \
                                   f'Дата дедлайна: {"Не указано" if item["deadline"] is None else item["deadline"]}\n'
             else:
@@ -28,14 +30,4 @@ async def diary(message, bot):
         diary_text = f'У вас нет активных задач.\n' \
                      f'Добавить?'
 
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    add_task_button = types.InlineKeyboardButton('Добавить задачу')
-    change_task_button = types.InlineKeyboardButton('Изменить задачу')
-    delete_task_button = types.InlineKeyboardButton('Удалить задачу')
-    main_menu_button = types.InlineKeyboardButton('Главное меню')
-    markup.row(add_task_button)
-    markup.row(change_task_button)
-    markup.row(delete_task_button)
-    markup.row(main_menu_button)
-
-    await bot.send_message(message.chat.id, diary_text, parse_mode='html', reply_markup=markup)
+    await bot.send_message(message.chat.id, diary_text, parse_mode='html', reply_markup=diary_markup())
