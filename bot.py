@@ -15,11 +15,13 @@ from commands.change_task import change_task, cancel_change_task, get_task_id, i
 from commands.delete_task import delete_task, cancel_delete_task, ready_delete_task, incorrect_del_task_id
 from commands.weather_now import weather_now
 from commands.weather_5_days import weather_5_days
+from commands.search_in_google import search_in_google, cancel_search_in_google, ready_search_in_google
 
-from utils.states import ChangeNameStates, ChangeCityStates, AddTaskStates, ChangeTaskStates, DeleteTaskStates
+from utils.states import ChangeNameStates, ChangeCityStates, AddTaskStates, ChangeTaskStates, DeleteTaskStates, \
+    SearchState
 from utils.filters import DateOrNoneFilter, IsValidIDFilter
 from utils.commands_lists import PROFILE, CHANGE_NAME, CHANGE_CITY, DIARY, ADD_TASK, CHANGE_TASK, DELETE_TASK, \
-    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS
+    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH
 
 bot = AsyncTeleBot(TOKEN, state_storage=StateMemoryStorage())
 
@@ -170,6 +172,25 @@ async def weather_5_days_command(message):
     await weather_5_days(message, bot)
 
 
+@bot.message_handler(commands=['search'])
+async def search_in_google_command(message):
+    await search_in_google(message, bot)
+
+
+@bot.message_handler(state="*", commands='cancel')
+async def cancel_search_in_google_command(message):
+    await cancel_search_in_google(message, bot)
+
+
+@bot.message_handler(state=SearchState.search_data)
+async def ready_search_in_google_command(message):
+    if message.text.lower() == 'отмена':
+        return await cancel_search_in_google_command(message)
+
+    await ready_search_in_google(message, bot)
+
+
+# ToDo: Посмотреть, как можно сделать иначе настройку сообщений
 @bot.message_handler(content_types=['text'])
 async def insert_text(message):
     command = message.text.lower()
@@ -193,6 +214,8 @@ async def insert_text(message):
         await weather_5_days_command(message)
     elif command in WEATHER_NOW or ('погода' in command and len(command.split()) > 1):
         await weather_now_command(message)
+    elif command in SEARCH:
+        await search_in_google_command(message)
     else:
         await not_found_command(message)
 

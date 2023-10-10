@@ -21,3 +21,7 @@ class ChangeTaskStates(StatesGroup):
 
 class DeleteTaskStates(StatesGroup):
     id_task = State()
+
+
+class SearchState(StatesGroup):
+    search_data = State()

@@ -1,4 +1,5 @@
 from telebot.async_telebot import types
+from telebot.util import quick_markup
 
 
 def start_markup():
@@ -105,5 +106,26 @@ def weather_ready_markup(now):
         markup.row(main_menu_button)
     else:
         markup.row(main_menu_button)
+
+    return markup
+
+
+def more_search_markup():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    more_search_button = types.InlineKeyboardButton('Найти ещё')
+    main_menu_button = types.InlineKeyboardButton('Главное меню')
+    markup.row(more_search_button)
+    markup.row(main_menu_button)
+
+    return markup
+
+
+def data_search_inline_markup(urls):
+    markup = quick_markup({
+        '1': {'url': f'{urls[0]["url"]}'},
+        '2': {'url': f'{urls[1]["url"]}'},
+        '3': {'url': f'{urls[2]["url"]}'},
+        'Поиск в Google': {'url': f'{urls[3]["url"]}'},
+    }, row_width=3)
 
     return markup

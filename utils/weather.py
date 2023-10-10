@@ -11,7 +11,7 @@ def get_weather_5_days(city, token):
     return get.json()
 
 
-weather_descriptions = {
+WEATHER_DESCRIPTIONS = {
     "Clear": "Ясно☀️",
     "Clouds": "Облачно☁️",
     "Rain": "Дождь🌧️",

@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta
 from config import OPEN_WEATHER_TOKEN
 
 from utils.db import DataBase
-from utils.weather import get_weather_5_days, weather_descriptions
+from utils.weather import get_weather_5_days, WEATHER_DESCRIPTIONS
 from utils.markups import weather_city_is_none_markup, weather_incorrect_city_markup, weather_ready_markup
 
 
@@ -29,8 +29,8 @@ async def weather_5_days(message, bot):
                     weather_5_days_text += f'\nДата: {dt.split()[0]}\n'
                 weather_5_days_text += f'🕓Время: {dt.split()[1]}\n'
                 whats_now = weather["list"][i]["weather"][0]["main"]
-                if whats_now in weather_descriptions:
-                    now = weather_descriptions[whats_now]
+                if whats_now in WEATHER_DESCRIPTIONS:
+                    now = WEATHER_DESCRIPTIONS[whats_now]
                 else:
                     now = 'Посмотри в окно, не пойму что там'
                 weather_5_days_text += f'Температура: {weather["list"][i]["main"]["temp"]}°C, {now}\n'

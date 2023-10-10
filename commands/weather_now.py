@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta
 from config import OPEN_WEATHER_TOKEN
 
 from utils.db import DataBase
-from utils.weather import get_weather, weather_descriptions
+from utils.weather import get_weather, WEATHER_DESCRIPTIONS
 from utils.markups import weather_city_is_none_markup, weather_incorrect_city_markup, weather_ready_markup
 
 
@@ -27,8 +27,8 @@ async def weather_now(message, bot):
                                    parse_mode='html', reply_markup=weather_incorrect_city_markup(is_db))
         else:
             whats_now = weather["weather"][0]["main"]
-            if whats_now in weather_descriptions:
-                now = weather_descriptions[whats_now]
+            if whats_now in WEATHER_DESCRIPTIONS:
+                now = WEATHER_DESCRIPTIONS[whats_now]
             else:
                 now = 'Посмотри в окно, не пойму что там'
             tz = timezone(timedelta(seconds=weather['timezone']))
