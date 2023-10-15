@@ -135,7 +135,7 @@ def games_markup():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     tic_tac_toe_button = types.InlineKeyboardButton('Крестики-нолики')
     wordle_button = types.InlineKeyboardButton('Вордли')
-    statistics_button = types.InlineKeyboardButton('Моя статискика')
+    statistics_button = types.InlineKeyboardButton('Моя статистика')
     main_menu_button = types.InlineKeyboardButton('Главное меню')
     markup.row(tic_tac_toe_button)
     markup.row(wordle_button)

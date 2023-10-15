@@ -18,17 +18,19 @@ from commands.weather_5_days import weather_5_days
 from commands.search_in_google import search_in_google, cancel_search_in_google, ready_search_in_google
 from commands.games import games
 from commands.wordle_play import wordle_game, cancel_wordle_game, play_wordle_game, incorrect_length_word
+from commands.statistics import statistics
 
 from utils.states import ChangeNameStates, ChangeCityStates, AddTaskStates, ChangeTaskStates, DeleteTaskStates, \
     SearchState, WordleGameState
 from utils.filters import DateOrNoneFilter, IsValidIDFilter, IsCorrectLengthWord
 from utils.commands_lists import PROFILE, CHANGE_NAME, CHANGE_CITY, DIARY, ADD_TASK, CHANGE_TASK, DELETE_TASK, \
-    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH, GAMES, WORDLE_GAME
+    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH, GAMES, WORDLE_GAME, STATISTICS
 
 # ToDo: Разобраться с распределением комманд по файлам
 
 # ToDo: проверить parse mode
 bot = AsyncTeleBot(TOKEN, state_storage=StateMemoryStorage(), parse_mode='html')
+
 
 # ToDo: проверить regexp, НЕТ - хорошо работает с кастомными фильтрами
 @bot.message_handler(commands=['start'])
@@ -223,6 +225,11 @@ async def incorrect_length_word_wordle_game(message):
     await incorrect_length_word(message, bot)
 
 
+@bot.message_handler(commands=['statistics'])
+async def statistics_command(message):
+    await statistics(message, bot)
+
+
 # ToDo: Посмотреть, как можно сделать иначе настройку сообщений
 @bot.message_handler(content_types=['text'])
 async def insert_text(message):
@@ -253,6 +260,8 @@ async def insert_text(message):
         await games_command(message)
     elif command in WORDLE_GAME:
         await wordle_game_command(message)
+    elif command in STATISTICS:
+        await statistics_command(message)
     else:
         await not_found_command(message)
 
