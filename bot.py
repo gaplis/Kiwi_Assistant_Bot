@@ -16,16 +16,21 @@ from commands.delete_task import delete_task, cancel_delete_task, ready_delete_t
 from commands.weather_now import weather_now
 from commands.weather_5_days import weather_5_days
 from commands.search_in_google import search_in_google, cancel_search_in_google, ready_search_in_google
+from commands.games import games
+from commands.wordle_play import wordle_game, cancel_wordle_game, play_wordle_game, incorrect_length_word
 
 from utils.states import ChangeNameStates, ChangeCityStates, AddTaskStates, ChangeTaskStates, DeleteTaskStates, \
-    SearchState
-from utils.filters import DateOrNoneFilter, IsValidIDFilter
+    SearchState, WordleGameState
+from utils.filters import DateOrNoneFilter, IsValidIDFilter, IsCorrectLengthWord
 from utils.commands_lists import PROFILE, CHANGE_NAME, CHANGE_CITY, DIARY, ADD_TASK, CHANGE_TASK, DELETE_TASK, \
-    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH
+    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH, GAMES, WORDLE_GAME
 
-bot = AsyncTeleBot(TOKEN, state_storage=StateMemoryStorage())
+# ToDo: Разобраться с распределением комманд по файлам
 
+# ToDo: проверить parse mode
+bot = AsyncTeleBot(TOKEN, state_storage=StateMemoryStorage(), parse_mode='html')
 
+# ToDo: проверить regexp, НЕТ - хорошо работает с кастомными фильтрами
 @bot.message_handler(commands=['start'])
 async def start_command(message):
     await start(message, bot)
@@ -190,6 +195,34 @@ async def ready_search_in_google_command(message):
     await ready_search_in_google(message, bot)
 
 
+@bot.message_handler(commands=['games'])
+async def games_command(message):
+    await games(message, bot)
+
+
+@bot.message_handler(commands=['wordle_game'])
+async def wordle_game_command(message):
+    await wordle_game(message, bot)
+
+
+@bot.message_handler(state="*", commands='cancel')
+async def cancel_wordle_game_command(message):
+    await cancel_wordle_game(message, bot)
+
+
+@bot.message_handler(state=WordleGameState.game, is_correct_length_word=True)
+async def play_wordle_game_command(message):
+    if message.text.lower() == 'отмена':
+        return await cancel_wordle_game_command(message)
+
+    await play_wordle_game(message, bot)
+
+
+@bot.message_handler(state=WordleGameState.game, is_correct_length_word=False)
+async def incorrect_length_word_wordle_game(message):
+    await incorrect_length_word(message, bot)
+
+
 # ToDo: Посмотреть, как можно сделать иначе настройку сообщений
 @bot.message_handler(content_types=['text'])
 async def insert_text(message):
@@ -216,6 +249,10 @@ async def insert_text(message):
         await weather_now_command(message)
     elif command in SEARCH:
         await search_in_google_command(message)
+    elif command in GAMES:
+        await games_command(message)
+    elif command in WORDLE_GAME:
+        await wordle_game_command(message)
     else:
         await not_found_command(message)
 
@@ -229,3 +266,4 @@ async def not_found_command(message):
 bot.add_custom_filter(asyncio_filters.StateFilter(bot))
 bot.add_custom_filter(DateOrNoneFilter())
 bot.add_custom_filter(IsValidIDFilter())
+bot.add_custom_filter(IsCorrectLengthWord())

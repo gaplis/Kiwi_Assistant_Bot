@@ -24,7 +24,7 @@ async def weather_now(message, bot):
                                   'Попробуй указать правильный город.'
 
             await bot.send_message(message.chat.id, incorrect_city_text,
-                                   parse_mode='html', reply_markup=weather_incorrect_city_markup(is_db))
+                                   reply_markup=weather_incorrect_city_markup(is_db))
         else:
             whats_now = weather["weather"][0]["main"]
             if whats_now in WEATHER_DESCRIPTIONS:
@@ -50,11 +50,9 @@ async def weather_now(message, bot):
                                 f'Заход солнца: {sunset.strftime("%H:%M:%S")}\n' \
                                 f'Продолжительность дня: {sunset - sunrise}'
 
-            await bot.send_message(message.chat.id, weather_now_text,
-                                   parse_mode='html', reply_markup=weather_ready_markup(True))
+            await bot.send_message(message.chat.id, weather_now_text, reply_markup=weather_ready_markup(True))
     else:
         city_is_none_text = 'У тебя не указан город.\n' \
                             'Хочешь его указать?'
 
-        await bot.send_message(message.chat.id, city_is_none_text,
-                               parse_mode='html', reply_markup=weather_city_is_none_markup())
+        await bot.send_message(message.chat.id, city_is_none_text, reply_markup=weather_city_is_none_markup())

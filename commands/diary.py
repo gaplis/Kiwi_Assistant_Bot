@@ -30,4 +30,4 @@ async def diary(message, bot):
         diary_text = f'У вас нет активных задач.\n' \
                      f'Добавить?'
 
-    await bot.send_message(message.chat.id, diary_text, parse_mode='html', reply_markup=diary_markup())
+    await bot.send_message(message.chat.id, diary_text, reply_markup=diary_markup())

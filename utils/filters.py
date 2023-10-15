@@ -36,3 +36,10 @@ class IsValidIDFilter(SimpleCustomFilter):
                 return False
         else:
             return False
+
+
+class IsCorrectLengthWord(SimpleCustomFilter):
+    key = 'is_correct_length_word'
+
+    async def check(self, message):
+        return len(message.text) == 6

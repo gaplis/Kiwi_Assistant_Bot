@@ -19,7 +19,7 @@ async def weather_5_days(message, bot):
                                   'Попробуй указать правильный город.'
 
             await bot.send_message(message.chat.id, weather_5_days_text,
-                                   parse_mode='html', reply_markup=weather_incorrect_city_markup(True))
+                                   reply_markup=weather_incorrect_city_markup(True))
         else:
             weather_5_days_text = f'Погода на 5 дней в городе: {city}\n'
             for i in range(0, len(weather["list"]), 2):
@@ -35,12 +35,10 @@ async def weather_5_days(message, bot):
                     now = 'Посмотри в окно, не пойму что там'
                 weather_5_days_text += f'Температура: {weather["list"][i]["main"]["temp"]}°C, {now}\n'
 
-            await bot.send_message(message.chat.id, weather_5_days_text,
-                                   parse_mode='html', reply_markup=weather_ready_markup(False))
+            await bot.send_message(message.chat.id, weather_5_days_text, reply_markup=weather_ready_markup(False))
     else:
         weather_5_days_text = 'У тебя не указан город.\n' \
                               'Хочешь его указать?'
 
-        await bot.send_message(message.chat.id, weather_5_days_text,
-                               parse_mode='html', reply_markup=weather_city_is_none_markup())
+        await bot.send_message(message.chat.id, weather_5_days_text, reply_markup=weather_city_is_none_markup())
 

@@ -12,6 +12,12 @@ async def start(message, bot):
         else:
             db.update_user(message.from_user.id, db.U_NAME, message.from_user.username)
 
+        db.find_user(message.from_user.id, db.U_ID)
+        user_id = cursor.fetchone()[0]
+        db.find_statistics(user_id, db.ALL)
+        if cursor.fetchone() is None:
+            db.add_statistics(user_id)
+
         db.find_user(message.from_user.id, db.F_NAME)
         name = cursor.fetchone()[0]
 
@@ -21,4 +27,4 @@ async def start(message, bot):
     else:
         start_text = f'<i>Посмотри меню или попробуй что-нибудь написать мне. 😉</i> '
 
-    await bot.send_message(message.chat.id, start_text, parse_mode='html', reply_markup=start_markup())
+    await bot.send_message(message.chat.id, start_text, reply_markup=start_markup())

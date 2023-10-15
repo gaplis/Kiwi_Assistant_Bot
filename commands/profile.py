@@ -14,4 +14,4 @@ async def profile(message, bot):
                    f'<i>TGid: </i>{data[1]}\n' \
                    f'<i>Город: </i>{data[5] or "Не указан"}\n'
 
-    await bot.send_message(message.chat.id, profile_text, parse_mode='html', reply_markup=profile_markup())
+    await bot.send_message(message.chat.id, profile_text, reply_markup=profile_markup())

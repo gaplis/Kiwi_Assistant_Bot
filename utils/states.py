@@ -25,3 +25,7 @@ class DeleteTaskStates(StatesGroup):
 
 class SearchState(StatesGroup):
     search_data = State()
+
+
+class WordleGameState(StatesGroup):
+    game = State()

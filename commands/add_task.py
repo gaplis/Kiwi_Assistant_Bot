@@ -8,13 +8,13 @@ async def add_task(message, bot):
     task_text = 'Напиши свою задачу'
 
     await bot.set_state(message.from_user.id, AddTaskStates.task, message.chat.id)
-    await bot.send_message(message.chat.id, task_text, parse_mode='html', reply_markup=cancel_markup())
+    await bot.send_message(message.chat.id, task_text, reply_markup=cancel_markup())
 
 
 async def cancel_add_task(message, bot):
     cancel_text = "Если что, то ты всегда можешь вернуться и добавить задачу"
 
-    await bot.send_message(message.chat.id, cancel_text, parse_mode='html', reply_markup=main_menu_markup())
+    await bot.send_message(message.chat.id, cancel_text, reply_markup=main_menu_markup())
     await bot.delete_state(message.from_user.id, message.chat.id)
 
 
@@ -22,7 +22,7 @@ async def get_task(message, bot):
     deadline_text = 'А теперь укажи дату в формате "DD-MM-YYYY", до которой задачу необходимо выполнить ' \
                     'или напиши "Нет", если дата не нужна'
 
-    await bot.send_message(message.chat.id, deadline_text, parse_mode='html', reply_markup=cancel_markup())
+    await bot.send_message(message.chat.id, deadline_text, reply_markup=cancel_markup())
     await bot.set_state(message.from_user.id, AddTaskStates.deadline, message.chat.id)
     async with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         data['task'] = message.text
@@ -46,11 +46,11 @@ async def get_deadline(message, bot):
                     f'{task}\n' \
                     f'Срок до: {"Не указано" if deadline is None else deadline}'
 
-    await bot.send_message(message.chat.id, add_task_text, parse_mode="html", reply_markup=get_more_task_markup())
+    await bot.send_message(message.chat.id, add_task_text, reply_markup=get_more_task_markup())
     await bot.delete_state(message.from_user.id, message.chat.id)
 
 
 async def incorrect_deadline(message, bot):
     error_text = 'Нужно указывать дату в формате "DD-MM-YYYY", ' \
                  'либо ты указал неверную дату, попробуй ещё раз или напиши "Нет"'
-    await bot.send_message(message.chat.id, error_text, parse_mode='html', reply_markup=cancel_markup())
+    await bot.send_message(message.chat.id, error_text, reply_markup=cancel_markup())

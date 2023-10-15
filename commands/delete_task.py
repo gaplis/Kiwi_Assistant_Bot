@@ -16,19 +16,17 @@ async def delete_task(message, bot):
                     choice_task_text += f'{i}: {item["task"]}\n'
 
                 await bot.set_state(message.from_user.id, DeleteTaskStates.id_task, message.chat.id)
-                return await bot.send_message(message.chat.id, choice_task_text,
-                                              parse_mode='html', reply_markup=cancel_markup())
+                return await bot.send_message(message.chat.id, choice_task_text, reply_markup=cancel_markup())
     else:
         tasks_not_found_text = 'У тебя нет активных задач, удалять нечего.'
 
-        await bot.send_message(message.chat.id, tasks_not_found_text,
-                               parse_mode='html', reply_markup=main_menu_markup())
+        await bot.send_message(message.chat.id, tasks_not_found_text, reply_markup=main_menu_markup())
 
 
 async def cancel_delete_task(message, bot):
     cancel_text = "Если нужно будет удалить задачу, то возвращайся 😇"
 
-    await bot.send_message(message.chat.id, cancel_text, parse_mode='html', reply_markup=main_menu_markup())
+    await bot.send_message(message.chat.id, cancel_text, reply_markup=main_menu_markup())
     await bot.delete_state(message.from_user.id, message.chat.id)
 
 
@@ -44,8 +42,7 @@ async def ready_delete_task(message, bot):
 
     delete_task_text = f'<b>Готово, удалена задача {message.text}:\n</b>'
 
-    await bot.send_message(message.chat.id, delete_task_text,
-                           parse_mode="html", reply_markup=main_menu_markup())
+    await bot.send_message(message.chat.id, delete_task_text, reply_markup=main_menu_markup())
     await bot.delete_state(message.from_user.id, message.chat.id)
 
 
@@ -53,4 +50,4 @@ async def incorrect_del_task_id(message, bot):
     error_text = 'Похоже, ты указал задачу, которой нет, или написал не число.\n' \
                  'Попробуй снова, ты должен ввести номер задачи'
 
-    await bot.send_message(message.chat.id, error_text, parse_mode='html', reply_markup=cancel_markup())
+    await bot.send_message(message.chat.id, error_text, reply_markup=cancel_markup())

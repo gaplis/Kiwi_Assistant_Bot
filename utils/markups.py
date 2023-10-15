@@ -129,3 +129,17 @@ def data_search_inline_markup(urls):
     }, row_width=3)
 
     return markup
+
+
+def games_markup():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    tic_tac_toe_button = types.InlineKeyboardButton('Крестики-нолики')
+    wordle_button = types.InlineKeyboardButton('Вордли')
+    statistics_button = types.InlineKeyboardButton('Моя статискика')
+    main_menu_button = types.InlineKeyboardButton('Главное меню')
+    markup.row(tic_tac_toe_button)
+    markup.row(wordle_button)
+    markup.row(statistics_button)
+    markup.row(main_menu_button)
+
+    return markup
