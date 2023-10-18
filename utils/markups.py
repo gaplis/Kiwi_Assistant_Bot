@@ -143,3 +143,23 @@ def games_markup():
     markup.row(main_menu_button)
 
     return markup
+
+
+def ttt_play_markup(field):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button_one = types.InlineKeyboardButton(f'{"↖️" if field[0][0] is None else field[0][0]}')
+    button_two = types.InlineKeyboardButton(f'{"⬆️" if field[0][1] is None else field[0][1]}')
+    button_three = types.InlineKeyboardButton(f'{"↗️" if field[0][2] is None else field[0][2]}')
+    button_four = types.InlineKeyboardButton(f'{"⬅️" if field[1][0] is None else field[1][0]}')
+    button_five = types.InlineKeyboardButton(f'{"⏺" if field[1][1] is None else field[1][1]}')
+    button_six = types.InlineKeyboardButton(f'{"➡️" if field[1][2] is None else field[1][2]}')
+    button_seven = types.InlineKeyboardButton(f'{"↙️" if field[2][0] is None else field[2][0]}')
+    button_eight = types.InlineKeyboardButton(f'{"⬇️" if field[2][1] is None else field[2][1]}')
+    button_nine = types.InlineKeyboardButton(f'{"↘️" if field[2][2] is None else field[2][2]}')
+    cancel_button = types.InlineKeyboardButton('Отмена')
+    markup.row(button_one, button_two, button_three)
+    markup.row(button_four, button_five, button_six)
+    markup.row(button_seven, button_eight, button_nine)
+    markup.row(cancel_button)
+
+    return markup

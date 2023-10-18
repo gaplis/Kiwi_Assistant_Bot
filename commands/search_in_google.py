@@ -17,6 +17,7 @@ async def cancel_search_in_google(message, bot):
     await bot.delete_state(message.from_user.id, message.chat.id)
 
 
+# ToDo: Сделать поиск асинхронным
 async def ready_search_in_google(message, bot):
     search_data = get_search_data(message.text)
 

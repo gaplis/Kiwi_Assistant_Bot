@@ -29,3 +29,7 @@ class SearchState(StatesGroup):
 
 class WordleGameState(StatesGroup):
     game = State()
+
+
+class TTTGameState(StatesGroup):
+    game = State()

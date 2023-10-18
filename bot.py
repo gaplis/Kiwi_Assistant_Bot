@@ -19,12 +19,13 @@ from commands.search_in_google import search_in_google, cancel_search_in_google,
 from commands.games import games
 from commands.wordle_play import wordle_game, cancel_wordle_game, play_wordle_game, incorrect_length_word
 from commands.statistics import statistics
+from commands.ttt_play import ttt_game, cancel_ttt_game, play_ttt_game
 
 from utils.states import ChangeNameStates, ChangeCityStates, AddTaskStates, ChangeTaskStates, DeleteTaskStates, \
-    SearchState, WordleGameState
+    SearchState, WordleGameState, TTTGameState
 from utils.filters import DateOrNoneFilter, IsValidIDFilter, IsCorrectLengthWord
 from utils.commands_lists import PROFILE, CHANGE_NAME, CHANGE_CITY, DIARY, ADD_TASK, CHANGE_TASK, DELETE_TASK, \
-    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH, GAMES, WORDLE_GAME, STATISTICS
+    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH, GAMES, WORDLE_GAME, STATISTICS, TTT_GAME
 
 # ToDo: Разобраться с распределением комманд по файлам
 
@@ -230,6 +231,24 @@ async def statistics_command(message):
     await statistics(message, bot)
 
 
+@bot.message_handler(commands=['tic_tac_toe_game'])
+async def ttt_game_command(message):
+    await ttt_game(message, bot)
+
+
+@bot.message_handler(state="*", commands='cancel')
+async def cancel_ttt_game_command(message):
+    await cancel_ttt_game(message, bot)
+
+
+@bot.message_handler(state=TTTGameState.game)
+async def play_ttt_game_command(message):
+    if message.text.lower() == 'отмена':
+        return await cancel_ttt_game_command(message)
+
+    await play_ttt_game(message, bot)
+
+
 # ToDo: Посмотреть, как можно сделать иначе настройку сообщений
 @bot.message_handler(content_types=['text'])
 async def insert_text(message):
@@ -252,7 +271,7 @@ async def insert_text(message):
         await start_command(message)
     elif command in WEATHER_5_DAYS:
         await weather_5_days_command(message)
-    elif command in WEATHER_NOW or ('погода' in command and len(command.split()) > 1):
+    elif command in WEATHER_NOW or ('погода' in command and len(command.split()) > 1 and command not in WEATHER_5_DAYS):
         await weather_now_command(message)
     elif command in SEARCH:
         await search_in_google_command(message)
@@ -260,6 +279,8 @@ async def insert_text(message):
         await games_command(message)
     elif command in WORDLE_GAME:
         await wordle_game_command(message)
+    elif command in TTT_GAME:
+        await ttt_game_command(message)
     elif command in STATISTICS:
         await statistics_command(message)
     else:

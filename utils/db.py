@@ -19,6 +19,9 @@ class DataBase:
         'TTT': 'ttt_loses',
         'WORDLE': 'wordle_loses',
     }
+    DRAWS = {
+        'TTT': 'ttt_draws'
+    }
     LEAVES = {
         'TTT': 'ttt_leaves',
         'WORDLE': 'wordle_leaves',
