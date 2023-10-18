@@ -1,5 +1,7 @@
 from telebot.async_telebot import types
 from telebot.util import quick_markup
+from utils.db import DataBase
+import json
 
 
 def start_markup():
@@ -20,13 +22,24 @@ def start_markup():
     return markup
 
 
-def profile_markup():
+def profile_markup(user_id):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     change_name_button = types.InlineKeyboardButton('Поменять имя')
     change_city_button = types.InlineKeyboardButton('Указать или изменить город')
+
+    db = DataBase()
+    with db as cursor:
+        db.find_user(user_id, db.NOTIFICATIONS)
+        notifications = cursor.fetchone()[0]
+    if notifications == 0:
+        notifications_button = types.InlineKeyboardButton('Включить утренние уведомления')
+    else:
+        notifications_button = types.InlineKeyboardButton('Выключить утренние уведомления')
+
     main_menu_button = types.InlineKeyboardButton('Главное меню')
     markup.row(change_name_button)
     markup.row(change_city_button)
+    markup.row(notifications_button)
     markup.row(main_menu_button)
 
     return markup
@@ -48,15 +61,27 @@ def main_menu_markup():
     return markup
 
 
-def diary_markup():
+def diary_markup(user_id):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     add_task_button = types.InlineKeyboardButton('Добавить задачу')
     change_task_button = types.InlineKeyboardButton('Изменить задачу')
     delete_task_button = types.InlineKeyboardButton('Удалить задачу')
+
+    notifications_button = None
+    with open('tasks.json', 'r', encoding='utf-8') as rf:
+        json_file = json.load(rf)
+    for json_dict in json_file:
+        if json_dict['tg_id'] == user_id:
+            if not json_dict['notifications']:
+                notifications_button = types.InlineKeyboardButton('Включить уведомления о задачах')
+            else:
+                notifications_button = types.InlineKeyboardButton('Выключить уведомления о задачах')
     main_menu_button = types.InlineKeyboardButton('Главное меню')
+
     markup.row(add_task_button)
     markup.row(change_task_button)
     markup.row(delete_task_button)
+    markup.row(notifications_button)
     markup.row(main_menu_button)
 
     return markup

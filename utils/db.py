@@ -5,10 +5,13 @@ from config import HOST, PORT, USER_DB, PASSWORD_DB, NAME_DB, TABLES_DB
 class DataBase:
     ALL = '*'
     U_ID = 'id'
+    TG_ID = 'tg_id'
     F_NAME = 'first_name'
     U_NAME = 'username'
     LANGUAGE = 'language_code'
     U_CITY = 'city'
+    NOTIFICATIONS = 'notifications'
+    TIMEZONE = 'timezone'
     STAT_ID = 'id'
     STAT_U_ID = 'user_id'
     WINS = {
@@ -72,3 +75,7 @@ class DataBase:
         update = f"UPDATE {NAME_DB}.{TABLES_DB['STATISTICS']} " \
                  f"SET {whats_update} = '{update_data}' WHERE user_id = {user_id};"
         return self.cursor.execute(update)
+
+    def find_user_for_notifications(self, *columns):
+        find = f"SELECT {', '.join(columns)} FROM {NAME_DB}.{TABLES_DB['USERS']};"
+        return self.cursor.execute(find)

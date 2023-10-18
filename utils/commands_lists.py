@@ -75,3 +75,19 @@ STATISTICS = [
     'статистика',
     'статистика игр',
 ]
+
+ON_TASKS_NOTIFICATIONS = [
+    'включить уведомления о задачах',
+]
+
+OFF_TASKS_NOTIFICATIONS = [
+    'выключить уведомления о задачах',
+]
+
+ON_MORNING_NOTIFICATIONS = [
+    'включить утренние уведомления',
+]
+
+OFF_MORNING_NOTIFICATIONS = [
+    'выключить утренние уведомления',
+]

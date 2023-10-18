@@ -20,12 +20,15 @@ from commands.games import games
 from commands.wordle_play import wordle_game, cancel_wordle_game, play_wordle_game, incorrect_length_word
 from commands.statistics import statistics
 from commands.ttt_play import ttt_game, cancel_ttt_game, play_ttt_game
+from commands.tasks_notifications import on_tasks_notifications, off_tasks_notifications
+from commands.morning_notifications import on_morning_notifications, off_morning_notifications
 
 from utils.states import ChangeNameStates, ChangeCityStates, AddTaskStates, ChangeTaskStates, DeleteTaskStates, \
     SearchState, WordleGameState, TTTGameState
 from utils.filters import DateOrNoneFilter, IsValidIDFilter, IsCorrectLengthWord
 from utils.commands_lists import PROFILE, CHANGE_NAME, CHANGE_CITY, DIARY, ADD_TASK, CHANGE_TASK, DELETE_TASK, \
-    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH, GAMES, WORDLE_GAME, STATISTICS, TTT_GAME
+    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH, GAMES, WORDLE_GAME, STATISTICS, TTT_GAME, ON_TASKS_NOTIFICATIONS, \
+    OFF_TASKS_NOTIFICATIONS, ON_MORNING_NOTIFICATIONS, OFF_MORNING_NOTIFICATIONS
 
 # ToDo: Разобраться с распределением комманд по файлам
 
@@ -249,6 +252,26 @@ async def play_ttt_game_command(message):
     await play_ttt_game(message, bot)
 
 
+@bot.message_handler(commands=['on_tasks_notifications'])
+async def on_tasks_notifications_command(message):
+    await on_tasks_notifications(message, bot)
+
+
+@bot.message_handler(commands=['off_tasks_notifications'])
+async def off_tasks_notifications_command(message):
+    await off_tasks_notifications(message, bot)
+
+
+@bot.message_handler(commands=['on_morning_notifications'])
+async def on_morning_notifications_command(message):
+    await on_morning_notifications(message, bot)
+
+
+@bot.message_handler(commands=['off_morning_notifications'])
+async def off_morning_notifications_command(message):
+    await off_morning_notifications(message, bot)
+
+
 # ToDo: Посмотреть, как можно сделать иначе настройку сообщений
 @bot.message_handler(content_types=['text'])
 async def insert_text(message):
@@ -283,6 +306,14 @@ async def insert_text(message):
         await ttt_game_command(message)
     elif command in STATISTICS:
         await statistics_command(message)
+    elif command in ON_TASKS_NOTIFICATIONS:
+        await on_tasks_notifications_command(message)
+    elif command in OFF_TASKS_NOTIFICATIONS:
+        await off_tasks_notifications_command(message)
+    elif command in ON_MORNING_NOTIFICATIONS:
+        await on_morning_notifications_command(message)
+    elif command in OFF_MORNING_NOTIFICATIONS:
+        await off_morning_notifications_command(message)
     else:
         await not_found_command(message)
 

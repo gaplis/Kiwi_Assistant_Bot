@@ -1,6 +1,8 @@
 from utils.db import DataBase
 from utils.states import ChangeCityStates
 from utils.markups import cancel_markup, main_menu_markup
+from utils.timezones import get_timezone
+from config import OPEN_WEATHER_TOKEN
 
 
 async def change_city(message, bot):
@@ -22,6 +24,9 @@ async def ready_change_city(message, bot):
     db = DataBase()
     with db as cursor:
         db.update_user(message.from_user.id, db.U_CITY, message.text.title())
+        timezone = get_timezone(message.text, OPEN_WEATHER_TOKEN)
+        if timezone:
+            db.update_user(message.from_user.id, db.TIMEZONE, timezone)
 
         db.find_user(message.from_user.id, db.U_CITY)
         new_city = cursor.fetchone()[0]

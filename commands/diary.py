@@ -23,6 +23,7 @@ async def diary(message, bot):
         add_user = {
             "tg_id": message.from_user.id,
             "tasks": [],
+            "notifications": False,
         }
         json_file.append(add_user)
         with open('tasks.json', 'w', encoding='utf-8') as wf:
@@ -30,4 +31,4 @@ async def diary(message, bot):
         diary_text = f'У вас нет активных задач.\n' \
                      f'Добавить?'
 
-    await bot.send_message(message.chat.id, diary_text, reply_markup=diary_markup())
+    await bot.send_message(message.chat.id, diary_text, reply_markup=diary_markup(message.from_user.id))
