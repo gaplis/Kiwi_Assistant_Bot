@@ -39,6 +39,7 @@ DELETE_TASK = [
 MAIN_MENU = [
     'главное меню',
     'меню',
+    '/start',
 ]
 
 WEATHER_NOW = [
@@ -90,4 +91,18 @@ ON_MORNING_NOTIFICATIONS = [
 
 OFF_MORNING_NOTIFICATIONS = [
     'выключить утренние уведомления',
+]
+
+HELP = [
+    'помощь',
+]
+
+CANCEL = [
+    'отмена',
+    'отменить',
+]
+
+GIVE_UP = [
+    'сдаться',
+    'сдаюсь',
 ]

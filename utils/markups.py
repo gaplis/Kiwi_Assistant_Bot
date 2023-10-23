@@ -181,10 +181,18 @@ def ttt_play_markup(field):
     button_seven = types.InlineKeyboardButton(f'{"↙️" if field[2][0] is None else field[2][0]}')
     button_eight = types.InlineKeyboardButton(f'{"⬇️" if field[2][1] is None else field[2][1]}')
     button_nine = types.InlineKeyboardButton(f'{"↘️" if field[2][2] is None else field[2][2]}')
-    cancel_button = types.InlineKeyboardButton('Отмена')
+    give_up_button = types.InlineKeyboardButton('Сдаться')
     markup.row(button_one, button_two, button_three)
     markup.row(button_four, button_five, button_six)
     markup.row(button_seven, button_eight, button_nine)
-    markup.row(cancel_button)
+    markup.row(give_up_button)
+
+    return markup
+
+
+def give_up_markup():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    give_up_button = types.InlineKeyboardButton('Сдаться')
+    markup.row(give_up_button)
 
     return markup

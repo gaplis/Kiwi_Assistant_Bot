@@ -1,6 +1,7 @@
 import json
 
-from telebot.asyncio_filters import SimpleCustomFilter
+from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_filters import SimpleCustomFilter, StateFilter
 from datetime import datetime
 
 
@@ -43,3 +44,10 @@ class IsCorrectLengthWord(SimpleCustomFilter):
 
     async def check(self, message):
         return len(message.text) == 6
+
+
+def register_filters(bot: AsyncTeleBot):
+    bot.add_custom_filter(StateFilter(bot))
+    bot.add_custom_filter(DateOrNoneFilter())
+    bot.add_custom_filter(IsValidIDFilter())
+    bot.add_custom_filter(IsCorrectLengthWord())

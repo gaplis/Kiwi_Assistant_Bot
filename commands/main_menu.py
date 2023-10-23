@@ -2,7 +2,7 @@ from utils.db import DataBase
 from utils.markups import start_markup
 
 
-async def start(message, bot):
+async def main_menu(message, bot):
     db = DataBase()
     with db as cursor:
         db.find_user(message.from_user.id, db.ALL)

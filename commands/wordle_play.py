@@ -1,5 +1,5 @@
 from utils.states import WordleGameState
-from utils.markups import cancel_markup, main_menu_markup
+from utils.markups import main_menu_markup, give_up_markup
 from utils.wordle_engine import get_random_word, get_text_with_emoji, checking_for_word_existence
 from utils.db import DataBase
 
@@ -15,7 +15,7 @@ async def wordle_game(message, bot):
 
     await bot.set_state(message.from_user.id, WordleGameState.game, message.chat.id)
     await bot.send_message(message.chat.id, wordle_game_text)
-    await bot.send_message(message.chat.id, start_game_text, reply_markup=cancel_markup())
+    await bot.send_message(message.chat.id, start_game_text, reply_markup=give_up_markup())
     async with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         data['word'] = get_random_word()
         data['step'] = 1
@@ -43,12 +43,12 @@ async def play_wordle_game(message, bot):
             if message.text.lower() == data["steps"][item]["word"]:
                 repeat_word_text = f'Ты уже проверял слово {message.text.upper()}, попробуй другое'
 
-                return await bot.send_message(message.from_user.id, repeat_word_text, reply_markup=cancel_markup())
+                return await bot.send_message(message.from_user.id, repeat_word_text, reply_markup=give_up_markup())
         if not checking_for_word_existence(message.text.lower()):
             not_found_word_text = f'Похоже, такого слова не существует.\n' \
                                   f'Пока что...'
 
-            return await bot.send_message(message.from_user.id, not_found_word_text, reply_markup=cancel_markup())
+            return await bot.send_message(message.from_user.id, not_found_word_text, reply_markup=give_up_markup())
         if data['step'] < 6:
             if message.text.lower() != data['word']:
                 data['steps'][data['step']] = {'word': '', 'text': ''}
@@ -62,7 +62,7 @@ async def play_wordle_game(message, bot):
 
                 data['step'] += 1
                 await bot.send_message(message.from_user.id, incorrect_word_text)
-                await bot.send_message(message.from_user.id, now_step_text, reply_markup=cancel_markup())
+                await bot.send_message(message.from_user.id, now_step_text, reply_markup=give_up_markup())
             else:
                 db = DataBase()
                 with db as cursor:
@@ -115,4 +115,4 @@ async def play_wordle_game(message, bot):
 async def incorrect_length_word(message, bot):
     error_text = 'Слово должно состоять из 6 букв, будь внимателен'
 
-    await bot.send_message(message.chat.id, error_text, reply_markup=cancel_markup())
+    await bot.send_message(message.chat.id, error_text, reply_markup=give_up_markup())

@@ -1,10 +1,9 @@
-from telebot import asyncio_filters
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_storage import StateMemoryStorage
 
 from config import TOKEN
 
-from commands.start import start
+from commands.main_menu import main_menu
 from commands.profile import profile
 from commands.not_found import not_found
 from commands.change_city import change_city, cancel_change_city, ready_change_city
@@ -22,309 +21,72 @@ from commands.statistics import statistics
 from commands.ttt_play import ttt_game, cancel_ttt_game, play_ttt_game
 from commands.tasks_notifications import on_tasks_notifications, off_tasks_notifications
 from commands.morning_notifications import on_morning_notifications, off_morning_notifications
+from commands.helps import helps
 
 from utils.states import ChangeNameStates, ChangeCityStates, AddTaskStates, ChangeTaskStates, DeleteTaskStates, \
     SearchState, WordleGameState, TTTGameState
-from utils.filters import DateOrNoneFilter, IsValidIDFilter, IsCorrectLengthWord
-from utils.commands_lists import PROFILE, CHANGE_NAME, CHANGE_CITY, DIARY, ADD_TASK, CHANGE_TASK, DELETE_TASK, \
-    MAIN_MENU, WEATHER_NOW, WEATHER_5_DAYS, SEARCH, GAMES, WORDLE_GAME, STATISTICS, TTT_GAME, ON_TASKS_NOTIFICATIONS, \
-    OFF_TASKS_NOTIFICATIONS, ON_MORNING_NOTIFICATIONS, OFF_MORNING_NOTIFICATIONS
+from utils.filters import register_filters
+from utils.commands_filters import register_commands_filters
 
 # ToDo: Разобраться с распределением комманд по файлам
 
-# ToDo: проверить parse mode
 bot = AsyncTeleBot(TOKEN, state_storage=StateMemoryStorage(), parse_mode='html')
 
-
-# ToDo: проверить regexp, НЕТ - хорошо работает с кастомными фильтрами
-@bot.message_handler(commands=['start'])
-async def start_command(message):
-    await start(message, bot)
-
-
-@bot.message_handler(commands=['profile'])
-async def profile_command(message):
-    await profile(message, bot)
-
-
-@bot.message_handler(commands=['change_name'])
-async def change_name_command(message):
-    await change_name(message, bot)
-
-
-@bot.message_handler(state="*", commands='cancel')
-async def cancel_change_name_command(message):
-    await cancel_change_name(message, bot)
-
-
-@bot.message_handler(state=ChangeNameStates.new_name)
-async def ready_for_change_name(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_change_name_command(message)
-
-    await ready_change_name(message, bot)
-
-
-@bot.message_handler(commands=['change_city'])
-async def change_city_command(message):
-    await change_city(message, bot)
-
-
-@bot.message_handler(state="*", commands='cancel')
-async def cancel_change_city_command(message):
-    await cancel_change_city(message, bot)
-
-
-@bot.message_handler(state=ChangeCityStates.new_city)
-async def ready_for_change_city(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_change_city_command(message)
-
-    await ready_change_city(message, bot)
-
-
-@bot.message_handler(commands=['diary'])
-async def diary_command(message):
-    await diary(message, bot)
-
-
-@bot.message_handler(commands=['add_task'])
-async def add_task_command(message):
-    await add_task(message, bot)
-
-
-@bot.message_handler(state="*", commands='cancel')
-async def cancel_add_task_command(message):
-    await cancel_add_task(message, bot)
-
-
-@bot.message_handler(state=AddTaskStates.task)
-async def ready_for_get_task(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_add_task_command(message)
-
-    await get_task(message, bot)
-
-
-@bot.message_handler(state=AddTaskStates.deadline, is_date_or_none=True)
-async def ready_for_get_deadline(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_add_task_command(message)
-
-    await get_deadline(message, bot)
-
-
-@bot.message_handler(state=AddTaskStates.deadline, is_date_or_none=False)
-async def not_valid_deadline(message):
-    await incorrect_deadline(message, bot)
-
-
-@bot.message_handler(commands=['change_task'])
-async def change_task_command(message):
-    await change_task(message, bot)
-
-
-@bot.message_handler(state="*", commands='cancel')
-async def cancel_change_task_command(message):
-    await cancel_change_task(message, bot)
-
-
-@bot.message_handler(state=ChangeTaskStates.id_task, is_valid_id=True)
-async def ready_for_get_task_id(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_change_task_command(message)
-
-    await get_task_id(message, bot)
-
-
-@bot.message_handler(state=ChangeTaskStates.id_task, is_valid_id=False)
-async def not_valid_task_id(message):
-    await incorrect_task_id(message, bot)
-
-
-@bot.message_handler(state=ChangeTaskStates.new_data)
-async def ready_for_get_new_data(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_change_task_command(message)
-
-    await get_new_data(message, bot)
-
-
-@bot.message_handler(commands=['delete_task'])
-async def delete_task_command(message):
-    await delete_task(message, bot)
-
-
-@bot.message_handler(state="*", commands='cancel')
-async def cancel_delete_task_command(message):
-    await cancel_delete_task(message, bot)
-
-
-@bot.message_handler(state=DeleteTaskStates.id_task, is_valid_id=True)
-async def ready_for_delete_task(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_delete_task_command(message)
-
-    await ready_delete_task(message, bot)
-
-
-@bot.message_handler(state=DeleteTaskStates.id_task, is_valid_id=False)
-async def not_valid_del_task_id(message):
-    await incorrect_del_task_id(message, bot)
-
-
-@bot.message_handler(commands=['weather_now'])
-async def weather_now_command(message):
-    await weather_now(message, bot)
-
-
-@bot.message_handler(commands=['weather_5_days'])
-async def weather_5_days_command(message):
-    await weather_5_days(message, bot)
-
-
-@bot.message_handler(commands=['search'])
-async def search_in_google_command(message):
-    await search_in_google(message, bot)
-
-
-@bot.message_handler(state="*", commands='cancel')
-async def cancel_search_in_google_command(message):
-    await cancel_search_in_google(message, bot)
-
-
-@bot.message_handler(state=SearchState.search_data)
-async def ready_search_in_google_command(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_search_in_google_command(message)
-
-    await ready_search_in_google(message, bot)
-
-
-@bot.message_handler(commands=['games'])
-async def games_command(message):
-    await games(message, bot)
-
-
-@bot.message_handler(commands=['wordle_game'])
-async def wordle_game_command(message):
-    await wordle_game(message, bot)
-
-
-@bot.message_handler(state="*", commands='cancel')
-async def cancel_wordle_game_command(message):
-    await cancel_wordle_game(message, bot)
-
-
-@bot.message_handler(state=WordleGameState.game, is_correct_length_word=True)
-async def play_wordle_game_command(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_wordle_game_command(message)
-
-    await play_wordle_game(message, bot)
-
-
-@bot.message_handler(state=WordleGameState.game, is_correct_length_word=False)
-async def incorrect_length_word_wordle_game(message):
-    await incorrect_length_word(message, bot)
-
-
-@bot.message_handler(commands=['statistics'])
-async def statistics_command(message):
-    await statistics(message, bot)
-
-
-@bot.message_handler(commands=['tic_tac_toe_game'])
-async def ttt_game_command(message):
-    await ttt_game(message, bot)
-
-
-@bot.message_handler(state="*", commands='cancel')
-async def cancel_ttt_game_command(message):
-    await cancel_ttt_game(message, bot)
-
-
-@bot.message_handler(state=TTTGameState.game)
-async def play_ttt_game_command(message):
-    if message.text.lower() == 'отмена':
-        return await cancel_ttt_game_command(message)
-
-    await play_ttt_game(message, bot)
-
-
-@bot.message_handler(commands=['on_tasks_notifications'])
-async def on_tasks_notifications_command(message):
-    await on_tasks_notifications(message, bot)
-
-
-@bot.message_handler(commands=['off_tasks_notifications'])
-async def off_tasks_notifications_command(message):
-    await off_tasks_notifications(message, bot)
-
-
-@bot.message_handler(commands=['on_morning_notifications'])
-async def on_morning_notifications_command(message):
-    await on_morning_notifications(message, bot)
-
-
-@bot.message_handler(commands=['off_morning_notifications'])
-async def off_morning_notifications_command(message):
-    await off_morning_notifications(message, bot)
-
-
-# ToDo: Посмотреть, как можно сделать иначе настройку сообщений
-@bot.message_handler(content_types=['text'])
-async def insert_text(message):
-    command = message.text.lower()
-    if command in PROFILE:
-        await profile_command(message)
-    elif command in CHANGE_NAME:
-        await change_name_command(message)
-    elif command in CHANGE_CITY:
-        await change_city_command(message)
-    elif command in DIARY:
-        await diary_command(message)
-    elif command in ADD_TASK:
-        await add_task_command(message)
-    elif command in CHANGE_TASK:
-        await change_task_command(message)
-    elif command in DELETE_TASK:
-        await delete_task_command(message)
-    elif command in MAIN_MENU:
-        await start_command(message)
-    elif command in WEATHER_5_DAYS:
-        await weather_5_days_command(message)
-    elif command in WEATHER_NOW or ('погода' in command and len(command.split()) > 1 and command not in WEATHER_5_DAYS):
-        await weather_now_command(message)
-    elif command in SEARCH:
-        await search_in_google_command(message)
-    elif command in GAMES:
-        await games_command(message)
-    elif command in WORDLE_GAME:
-        await wordle_game_command(message)
-    elif command in TTT_GAME:
-        await ttt_game_command(message)
-    elif command in STATISTICS:
-        await statistics_command(message)
-    elif command in ON_TASKS_NOTIFICATIONS:
-        await on_tasks_notifications_command(message)
-    elif command in OFF_TASKS_NOTIFICATIONS:
-        await off_tasks_notifications_command(message)
-    elif command in ON_MORNING_NOTIFICATIONS:
-        await on_morning_notifications_command(message)
-    elif command in OFF_MORNING_NOTIFICATIONS:
-        await off_morning_notifications_command(message)
-    else:
-        await not_found_command(message)
-
-
-@bot.message_handler()
-async def not_found_command(message):
-    await not_found(message, bot)
-    await start_command(message)
-
-
-bot.add_custom_filter(asyncio_filters.StateFilter(bot))
-bot.add_custom_filter(DateOrNoneFilter())
-bot.add_custom_filter(IsValidIDFilter())
-bot.add_custom_filter(IsCorrectLengthWord())
+bot.register_message_handler(wordle_game, wordle_game_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_wordle_game, state=WordleGameState.game, give_up_commands=True, pass_bot=True)
+bot.register_message_handler(play_wordle_game, state=WordleGameState.game, is_correct_length_word=True, pass_bot=True)
+bot.register_message_handler(incorrect_length_word, state=WordleGameState.game, is_correct_length_word=False,
+                             pass_bot=True)
+
+bot.register_message_handler(ttt_game, ttt_game_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_ttt_game, state=TTTGameState.game, give_up_commands=True, pass_bot=True)
+bot.register_message_handler(play_ttt_game, state=TTTGameState.game, pass_bot=True)
+
+bot.register_message_handler(search_in_google, search_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_search_in_google, state=SearchState.search_data, cancel_commands=True,
+                             pass_bot=True)
+bot.register_message_handler(ready_search_in_google, state=SearchState.search_data, pass_bot=True)
+
+bot.register_message_handler(add_task, add_task_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_add_task, state=AddTaskStates.task, cancel_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_add_task, state=AddTaskStates.deadline, cancel_commands=True, pass_bot=True)
+bot.register_message_handler(get_task, state=AddTaskStates.task, pass_bot=True)
+bot.register_message_handler(get_deadline, state=AddTaskStates.deadline, is_date_or_none=True, pass_bot=True)
+bot.register_message_handler(incorrect_deadline, state=AddTaskStates.deadline, is_date_or_none=False, pass_bot=True)
+
+bot.register_message_handler(change_task, change_task_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_change_task, state=ChangeTaskStates.id_task, cancel_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_change_task, state=ChangeTaskStates.new_data, cancel_commands=True, pass_bot=True)
+bot.register_message_handler(get_task_id, state=ChangeTaskStates.id_task, is_valid_id=True, pass_bot=True)
+bot.register_message_handler(incorrect_task_id, state=ChangeTaskStates.id_task, is_valid_id=False, pass_bot=True)
+bot.register_message_handler(get_new_data, state=ChangeTaskStates.new_data, pass_bot=True)
+
+bot.register_message_handler(delete_task, delete_task_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_delete_task, state=DeleteTaskStates.id_task, cancel_commands=True, pass_bot=True)
+bot.register_message_handler(ready_delete_task, state=DeleteTaskStates.id_task, is_valid_id=True, pass_bot=True)
+bot.register_message_handler(incorrect_del_task_id, state=DeleteTaskStates.id_task, is_valid_id=False, pass_bot=True)
+
+bot.register_message_handler(change_name, change_name_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_change_name, state=ChangeNameStates.new_name, cancel_commands=True, pass_bot=True)
+bot.register_message_handler(ready_change_name, state=ChangeNameStates.new_name, pass_bot=True)
+
+bot.register_message_handler(change_city, change_city_commands=True, pass_bot=True)
+bot.register_message_handler(cancel_change_city, state=ChangeCityStates.new_city, cancel_commands=True, pass_bot=True)
+bot.register_message_handler(ready_change_city, state=ChangeCityStates.new_city, pass_bot=True)
+
+bot.register_message_handler(main_menu, main_menu_commands=True, pass_bot=True)
+bot.register_message_handler(profile, profile_commands=True, pass_bot=True)
+bot.register_message_handler(diary, diary_commands=True, pass_bot=True)
+bot.register_message_handler(weather_now, weather_now_commands=True, pass_bot=True)
+bot.register_message_handler(weather_5_days, weather_5_days_commands=True, pass_bot=True)
+bot.register_message_handler(games, games_commands=True, pass_bot=True)
+bot.register_message_handler(statistics, statistics_commands=True, pass_bot=True)
+bot.register_message_handler(on_tasks_notifications, on_task_notifications_commands=True, pass_bot=True)
+bot.register_message_handler(off_tasks_notifications, off_task_notifications_commands=True, pass_bot=True)
+bot.register_message_handler(on_morning_notifications, on_morning_notifications_commands=True, pass_bot=True)
+bot.register_message_handler(off_morning_notifications, off_morning_notifications_commands=True, pass_bot=True)
+bot.register_message_handler(helps, help_commands=True, pass_bot=True)
+bot.register_message_handler(not_found, pass_bot=True)
+
+register_filters(bot)
+register_commands_filters(bot)

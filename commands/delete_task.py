@@ -36,11 +36,13 @@ async def ready_delete_task(message, bot):
     with open('tasks.json', 'w', encoding='utf-8') as wf:
         for json_dict in json_file:
             if json_dict['tg_id'] == message.from_user.id:
+                task = json_dict['tasks'][int(message.text) - 1]['task']
                 json_dict['tasks'].pop(int(message.text) - 1)
                 json.dump(json_file, wf, ensure_ascii=False, indent=2)
                 break
 
-    delete_task_text = f'<b>Готово, удалена задача {message.text}:\n</b>'
+    delete_task_text = f'<b>Готово, удалена задача №{message.text}:\n</b>' \
+                       f'{task}'
 
     await bot.send_message(message.chat.id, delete_task_text, reply_markup=main_menu_markup())
     await bot.delete_state(message.from_user.id, message.chat.id)
