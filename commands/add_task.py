@@ -1,5 +1,7 @@
 import json
 
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.states import AddTaskStates
 from utils.markups import get_more_task_markup, cancel_markup, main_menu_markup
 
@@ -54,3 +56,12 @@ async def incorrect_deadline(message, bot):
     error_text = 'Нужно указывать дату в формате "DD-MM-YYYY", ' \
                  'либо ты указал неверную дату, попробуй ещё раз или напиши "Нет"'
     await bot.send_message(message.chat.id, error_text, reply_markup=cancel_markup())
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(add_task, add_task_commands=True, pass_bot=True)
+    bot.register_message_handler(cancel_add_task, state=AddTaskStates.task, cancel_commands=True, pass_bot=True)
+    bot.register_message_handler(cancel_add_task, state=AddTaskStates.deadline, cancel_commands=True, pass_bot=True)
+    bot.register_message_handler(get_task, state=AddTaskStates.task, pass_bot=True)
+    bot.register_message_handler(get_deadline, state=AddTaskStates.deadline, is_date_or_none=True, pass_bot=True)
+    bot.register_message_handler(incorrect_deadline, state=AddTaskStates.deadline, is_date_or_none=False, pass_bot=True)

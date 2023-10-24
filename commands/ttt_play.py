@@ -1,4 +1,7 @@
 from random import choice
+
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.states import TTTGameState
 from utils.db import DataBase
 from utils.markups import main_menu_markup, ttt_play_markup
@@ -191,3 +194,9 @@ async def play_ttt_game(message, bot):
 
         player_walks_text = f'Теперь твой ход'
         await bot.send_message(message.chat.id, player_walks_text, reply_markup=ttt_play_markup(data['field']))
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(ttt_game, ttt_game_commands=True, pass_bot=True)
+    bot.register_message_handler(cancel_ttt_game, state=TTTGameState.game, give_up_commands=True, pass_bot=True)
+    bot.register_message_handler(play_ttt_game, state=TTTGameState.game, pass_bot=True)

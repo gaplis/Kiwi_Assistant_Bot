@@ -1,3 +1,5 @@
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.db import DataBase
 from utils.markups import start_markup
 
@@ -28,3 +30,7 @@ async def main_menu(message, bot):
         start_text = f'<i>Посмотри меню или попробуй что-нибудь написать мне. 😉</i> '
 
     await bot.send_message(message.chat.id, start_text, reply_markup=start_markup())
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(main_menu, main_menu_commands=True, pass_bot=True)

@@ -1,3 +1,5 @@
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.db import DataBase
 from utils.states import ChangeCityStates
 from utils.markups import cancel_markup, main_menu_markup
@@ -34,3 +36,10 @@ async def ready_change_city(message, bot):
 
     await bot.send_message(message.chat.id, success_text, reply_markup=main_menu_markup())
     await bot.delete_state(message.from_user.id, message.chat.id)
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(change_city, change_city_commands=True, pass_bot=True)
+    bot.register_message_handler(cancel_change_city, state=ChangeCityStates.new_city, cancel_commands=True,
+                                 pass_bot=True)
+    bot.register_message_handler(ready_change_city, state=ChangeCityStates.new_city, pass_bot=True)

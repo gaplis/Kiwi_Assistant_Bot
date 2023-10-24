@@ -1,8 +1,10 @@
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.db import DataBase
 from utils.markups import profile_markup
 
 
-async def profile(message, bot):
+async def user_profile(message, bot):
     db = DataBase()
     with db as cursor:
         db.find_user(message.from_user.id, db.ALL)
@@ -15,3 +17,7 @@ async def profile(message, bot):
                    f'<i>Город: </i>{data[5] or "Не указан"}\n'
 
     await bot.send_message(message.chat.id, profile_text, reply_markup=profile_markup(data[1]))
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(user_profile, profile_commands=True, pass_bot=True)

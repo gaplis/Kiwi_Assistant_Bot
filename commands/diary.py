@@ -1,5 +1,7 @@
 import json
 
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.markups import diary_markup
 
 
@@ -32,3 +34,7 @@ async def diary(message, bot):
                      f'Добавить?'
 
     await bot.send_message(message.chat.id, diary_text, reply_markup=diary_markup(message.from_user.id))
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(diary, diary_commands=True, pass_bot=True)

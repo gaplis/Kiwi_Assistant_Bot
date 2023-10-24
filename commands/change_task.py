@@ -1,5 +1,7 @@
 import json
 
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.states import ChangeTaskStates
 from utils.markups import cancel_markup, main_menu_markup
 
@@ -64,3 +66,14 @@ async def get_new_data(message, bot):
 
     await bot.send_message(message.chat.id, update_task_text, reply_markup=main_menu_markup())
     await bot.delete_state(message.from_user.id, message.chat.id)
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(change_task, change_task_commands=True, pass_bot=True)
+    bot.register_message_handler(cancel_change_task, state=ChangeTaskStates.id_task, cancel_commands=True,
+                                 pass_bot=True)
+    bot.register_message_handler(cancel_change_task, state=ChangeTaskStates.new_data, cancel_commands=True,
+                                 pass_bot=True)
+    bot.register_message_handler(get_task_id, state=ChangeTaskStates.id_task, is_valid_id=True, pass_bot=True)
+    bot.register_message_handler(incorrect_task_id, state=ChangeTaskStates.id_task, is_valid_id=False, pass_bot=True)
+    bot.register_message_handler(get_new_data, state=ChangeTaskStates.new_data, pass_bot=True)

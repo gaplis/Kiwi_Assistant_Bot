@@ -2,6 +2,7 @@ from utils.states import WordleGameState
 from utils.markups import main_menu_markup, give_up_markup
 from utils.wordle_engine import get_random_word, get_text_with_emoji, checking_for_word_existence
 from utils.db import DataBase
+from telebot.async_telebot import AsyncTeleBot
 
 
 async def wordle_game(message, bot):
@@ -116,3 +117,12 @@ async def incorrect_length_word(message, bot):
     error_text = 'Слово должно состоять из 6 букв, будь внимателен'
 
     await bot.send_message(message.chat.id, error_text, reply_markup=give_up_markup())
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(wordle_game, wordle_game_commands=True, pass_bot=True)
+    bot.register_message_handler(cancel_wordle_game, state=WordleGameState.game, give_up_commands=True, pass_bot=True)
+    bot.register_message_handler(play_wordle_game, state=WordleGameState.game, is_correct_length_word=True,
+                                 pass_bot=True)
+    bot.register_message_handler(incorrect_length_word, state=WordleGameState.game, is_correct_length_word=False,
+                                 pass_bot=True)

@@ -1,5 +1,7 @@
 from datetime import datetime, timezone, timedelta
 
+from telebot.async_telebot import AsyncTeleBot
+
 from config import OPEN_WEATHER_TOKEN
 
 from utils.db import DataBase
@@ -42,3 +44,6 @@ async def weather_5_days(message, bot):
 
         await bot.send_message(message.chat.id, weather_5_days_text, reply_markup=weather_city_is_none_markup())
 
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(weather_5_days, weather_5_days_commands=True, pass_bot=True)

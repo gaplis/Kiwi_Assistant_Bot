@@ -1,8 +1,10 @@
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.db import DataBase
 from utils.markups import main_menu_markup
 
 
-async def statistics(message, bot):
+async def games_statistics(message, bot):
     db = DataBase()
     with db as cursor:
         db.find_user(message.from_user.id, db.U_ID)
@@ -70,3 +72,7 @@ async def statistics(message, bot):
         statistics_text = 'Ты пока еще ни во что не играл, попробуй!'
 
     await bot.send_message(message.from_user.id, statistics_text, reply_markup=main_menu_markup())
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(games_statistics, statistics_commands=True, pass_bot=True)

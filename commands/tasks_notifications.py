@@ -1,4 +1,7 @@
 import json
+
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.markups import main_menu_markup
 
 
@@ -30,3 +33,8 @@ async def off_tasks_notifications(message, bot):
     off_text = f'Уведомления о задачах выключены!'
 
     await bot.send_message(message.chat.id, off_text, reply_markup=main_menu_markup())
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(on_tasks_notifications, on_task_notifications_commands=True, pass_bot=True)
+    bot.register_message_handler(off_tasks_notifications, off_task_notifications_commands=True, pass_bot=True)

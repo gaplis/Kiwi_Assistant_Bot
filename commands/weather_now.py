@@ -1,5 +1,7 @@
 from datetime import datetime, timezone, timedelta
 
+from telebot.async_telebot import AsyncTeleBot
+
 from config import OPEN_WEATHER_TOKEN
 
 from utils.db import DataBase
@@ -56,3 +58,7 @@ async def weather_now(message, bot):
                             'Хочешь его указать?'
 
         await bot.send_message(message.chat.id, city_is_none_text, reply_markup=weather_city_is_none_markup())
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(weather_now, weather_now_commands=True, pass_bot=True)

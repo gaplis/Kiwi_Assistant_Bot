@@ -26,6 +26,10 @@ async def helps(message: types.Message, bot: AsyncTeleBot):
                 f'<b>"Выключить утренние уведомления"</b> - выключает утренние уведомления"\n' \
                 f'<b>"Включить уведомления о задачах"</b> - включает уведомления о дедлайнах задач ' \
                 f'(сегодня, за 1 день, за 3 дня, за 7 дней)"\n' \
-                f'<b>"Выключить уведомления о задачах"</b> - выключает уведомления о дедлайнах задач"\n' \
+                f'<b>"Выключить уведомления о задачах"</b> - выключает уведомления о дедлайнах задач"\n'
 
     await bot.send_message(message.from_user.id, help_text, reply_markup=main_menu_markup())
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(helps, help_commands=True, pass_bot=True)

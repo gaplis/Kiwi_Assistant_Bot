@@ -1,5 +1,7 @@
 import json
 
+from telebot.async_telebot import AsyncTeleBot
+
 from utils.states import DeleteTaskStates
 from utils.markups import cancel_markup, main_menu_markup
 
@@ -53,3 +55,12 @@ async def incorrect_del_task_id(message, bot):
                  'Попробуй снова, ты должен ввести номер задачи'
 
     await bot.send_message(message.chat.id, error_text, reply_markup=cancel_markup())
+
+
+def route(bot: AsyncTeleBot):
+    bot.register_message_handler(delete_task, delete_task_commands=True, pass_bot=True)
+    bot.register_message_handler(cancel_delete_task, state=DeleteTaskStates.id_task, cancel_commands=True,
+                                 pass_bot=True)
+    bot.register_message_handler(ready_delete_task, state=DeleteTaskStates.id_task, is_valid_id=True, pass_bot=True)
+    bot.register_message_handler(incorrect_del_task_id, state=DeleteTaskStates.id_task, is_valid_id=False,
+                                 pass_bot=True)
