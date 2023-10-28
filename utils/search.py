@@ -2,8 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 import pyshorteners
 
-# ToDo: Убирать ссылки из получаемого текста
-def get_search_data(query):
+
+async def get_search_data(query):
     q = query.replace(' ', '+')
 
     google_url = f"https://google.ru/search?q={q}"

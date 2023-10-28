@@ -19,9 +19,10 @@ async def cancel_search_in_google(message, bot):
     await bot.delete_state(message.from_user.id, message.chat.id)
 
 
-# ToDo: Сделать поиск асинхронным
 async def ready_search_in_google(message, bot):
-    search_data = get_search_data(message.text)
+    await bot.delete_state(message.from_user.id, message.chat.id)
+
+    search_data = await get_search_data(message.text)
 
     success_text = f"Вот что найдено по твоему запросу:\n\n"
     for i, item in enumerate(search_data, start=1):
@@ -34,7 +35,6 @@ async def ready_search_in_google(message, bot):
 
     await bot.send_message(message.chat.id, success_text, reply_markup=data_search_inline_markup(search_data))
     await bot.send_message(message.chat.id, more_search_text, reply_markup=more_search_markup())
-    await bot.delete_state(message.from_user.id, message.chat.id)
 
 
 def route(bot: AsyncTeleBot):

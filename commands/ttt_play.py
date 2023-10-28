@@ -8,8 +8,6 @@ from utils.markups import main_menu_markup, ttt_play_markup
 from utils.ttt_engine import rand_choice_bot_in_ttt_game, check_win
 
 
-# ToDo: Настроить ДБ, не допускать деления на ноль и добавить колонку ничья
-# ToDo: Не забыть про маркапы
 async def ttt_game(message, bot):
     ttt_game_text = f'<b>ПРАВИЛА ИГРЫ "КРЕСТИКИ-НОЛИКИ"</b>\n\n' \
                     f'Игроки по очереди ставят на свободные клетки поля 3×3 знаки ' \

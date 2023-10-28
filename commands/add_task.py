@@ -4,6 +4,7 @@ from telebot.async_telebot import AsyncTeleBot
 
 from utils.states import AddTaskStates
 from utils.markups import get_more_task_markup, cancel_markup, main_menu_markup
+from utils.sort_tasks import sort_tasks
 
 
 async def add_task(message, bot):
@@ -41,6 +42,7 @@ async def get_deadline(message, bot):
             for json_dict in json_file:
                 if json_dict['tg_id'] == message.from_user.id:
                     json_dict['tasks'].append(task_dict)
+                    sort_tasks(json_dict['tasks'])
                     json.dump(json_file, wf, ensure_ascii=False, indent=2)
                     break
 
