@@ -92,7 +92,6 @@ async def good_morning_notifications(bot: AsyncTeleBot):
                                 if tasks_list:
                                     good_morning_text += f'\n<b>Твои активные задачи:</b>\n'
                                     for i, item in enumerate(tasks_list, start=1):
-                                        # ToDo: сделать вывод задач по датам
                                         good_morning_text += f'{i}: {item["task"]}\n' \
                                                              f'Дата дедлайна: ' \
                                                              f'{"Не указано" if item["deadline"] is None else item["deadline"]}\n'

@@ -14,7 +14,6 @@ async def diary(message, bot):
             if tasks_list:
                 diary_text = f'<b>Ваши активные задачи:</b>\n'
                 for i, item in enumerate(tasks_list, start=1):
-                    # ToDo: сделать вывод задач по датам
                     diary_text += f'{i}: {item["task"]}\n' \
                                   f'Дата дедлайна: {"Не указано" if item["deadline"] is None else item["deadline"]}\n'
             else:
