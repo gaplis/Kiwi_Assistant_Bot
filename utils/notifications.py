@@ -40,7 +40,8 @@ async def tasks_notifications(bot: AsyncTeleBot):
                                 await bot.send_message(json_dict['tg_id'], notification_text)
 
         now = datetime.now()
-        tomorrow = datetime(day=now.day + 1, month=now.month, year=now.year, hour=9)
+        delta = now + timedelta(days=1)
+        tomorrow = datetime(day=delta.day, month=delta.month, year=delta.year, hour=9, second=30)
         sleep_seconds = tomorrow - now
         await asyncio.sleep(sleep_seconds.seconds)
 
@@ -99,10 +100,11 @@ async def good_morning_notifications(bot: AsyncTeleBot):
                         else:
                             good_morning_text += f'\nАктивных задач у тебя нет'
 
-                    await bot.send_message(tg_id, good_morning_text)
+                        await bot.send_message(tg_id, good_morning_text)
 
         now = datetime.now()
-        next_hour = datetime(day=now.day, month=now.month, year=now.year, hour=now.hour + 1)
+        delta = now + timedelta(hours=1)
+        next_hour = datetime(day=delta.day, month=delta.month, year=delta.year, hour=delta.hour, second=30)
         sleep_seconds = next_hour - now
         await asyncio.sleep(sleep_seconds.seconds)
 
