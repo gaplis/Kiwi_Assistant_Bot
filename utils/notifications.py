@@ -43,7 +43,7 @@ async def tasks_notifications(bot: AsyncTeleBot):
         delta = now + timedelta(days=1)
         tomorrow = datetime(day=delta.day, month=delta.month, year=delta.year, hour=9, second=30)
         sleep_seconds = tomorrow - now
-        await asyncio.sleep(sleep_seconds.seconds)
+        await asyncio.sleep(sleep_seconds.total_seconds())
 
 
 async def good_morning_notifications(bot: AsyncTeleBot):
@@ -106,7 +106,7 @@ async def good_morning_notifications(bot: AsyncTeleBot):
         delta = now + timedelta(hours=1)
         next_hour = datetime(day=delta.day, month=delta.month, year=delta.year, hour=delta.hour, second=30)
         sleep_seconds = next_hour - now
-        await asyncio.sleep(sleep_seconds.seconds)
+        await asyncio.sleep(sleep_seconds.total_seconds())
 
 
 async def running_notifications(bot):
