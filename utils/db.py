@@ -63,6 +63,10 @@ class DataBase:
         update = f"UPDATE {NAME_DB}.{TABLES_DB['USERS']} SET {whats_update} = '{update_data}' WHERE tg_id = {tg_id};"
         return self.cursor.execute(update)
 
+    def find_user_for_notifications(self, *columns):
+        find = f"SELECT {', '.join(columns)} FROM {NAME_DB}.{TABLES_DB['USERS']};"
+        return self.cursor.execute(find)
+
     def find_statistics(self, user_id, column):
         find = f"SELECT {column} FROM {NAME_DB}.{TABLES_DB['STATISTICS']} WHERE user_id = {user_id};"
         return self.cursor.execute(find)
@@ -75,7 +79,3 @@ class DataBase:
         update = f"UPDATE {NAME_DB}.{TABLES_DB['STATISTICS']} " \
                  f"SET {whats_update} = '{update_data}' WHERE user_id = {user_id};"
         return self.cursor.execute(update)
-
-    def find_user_for_notifications(self, *columns):
-        find = f"SELECT {', '.join(columns)} FROM {NAME_DB}.{TABLES_DB['USERS']};"
-        return self.cursor.execute(find)
